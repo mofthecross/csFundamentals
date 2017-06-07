@@ -1,4 +1,5 @@
 /*
+
 Valid Binary Search Tree
 Given a binary tree root node, check if the tree is a valid binary search tree.
 
@@ -22,9 +23,14 @@ The binary tree node has the following properties:
   value : an integer
   leftChild : default null
   rightChild : default null
+
 */
 
-function isValidBST(root) {
+//Method 1:
+  //InOrderTraveral on BST and collecting values in array.
+  //check if array is in ascending order to determine if BST.
+
+function isValidBST1(root) {
   const nodeValues = [];
 
   function inOrderTraverse(node) {
@@ -47,6 +53,31 @@ function isValidBST(root) {
   return true;
 }
 
+//Method 2:
+  //Recursion with Side Effects (with aditional min and max parameters.)
+function isValidBST(node, min, max) {
+  if (node.value === null) {
+    return true;
+  }
+  // node.value < min or node.value > max
+  if ((min !== null && node.value < min) || (max !== null && node.value > max)) {
+    return false;
+  }
+
+  // if not null, recurse thru leftChild, keep min  and change max to current node's value
+  if (node.leftChild !== null && node.value !== null) {
+    if (isValidBST(node.leftChild, min, node.value) === false) {
+      return false;
+    }
+  }
+  if (node.rightChild !== null && node.value !== null) {
+    if(isValidBST(node.rightChild, node.value, max) === false) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /*
 Solution
 Perform an in-order depth first search and push values into an array
@@ -55,7 +86,7 @@ Notes:
 Can be solved using recursion with side effects.
 */
 
-//TEST:
+/******************************TEST******************************/
 
 const BinarySearchTree = require('es6datastructures').BinarySearchTree;
 const newBST = new BinarySearchTree();
@@ -65,12 +96,11 @@ console.log('this example should be true:', isValidBST(newBST.root));
 
 class BinaryTreeNode {
   constructor(value) {
-    this.value = value || null;
-    this.leftChild = null;
-    this.rightChild = null;
+    this.value = value;
+    this.leftChild= null;
+    this.rightChild= null;
   }
 }
-
 
 const newBT = new BinaryTreeNode(5);
 newBT.leftChild = new BinaryTreeNode(2);
