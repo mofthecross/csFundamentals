@@ -42,7 +42,7 @@ function isValidBST(root) {
   for (let i = 1; i < nodeValues.length; i+= 1) {
     previous = nodeValues[i-1];
     current = nodeValues[i];
-    if (previous > current) return false;
+    if (previous >= current) return false;
   }
   return true;
 }
