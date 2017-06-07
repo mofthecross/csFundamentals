@@ -94,14 +94,7 @@ const newBST = new BinarySearchTree();
 
 console.log('this example should be true:', isValidBST(newBST.root));
 
-class BinaryTreeNode {
-  constructor(value) {
-    this.value = value;
-    this.leftChild= null;
-    this.rightChild= null;
-  }
-}
-
+const BinaryTreeNode = require('es6datastructures').BinaryTreeNode;
 const newBT = new BinaryTreeNode(5);
 newBT.leftChild = new BinaryTreeNode(2);
 newBT.rightChild = new BinaryTreeNode(7);
