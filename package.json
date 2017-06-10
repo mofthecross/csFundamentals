@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/mofthecross/csFundamentals#readme",
   "devDependencies": {
-    "es6datastructures": "git://github.com/mofthecross/ES6DataStructures.git"
+    "es6datastructuresandalgorithms": "git://github.com/mofthecross/ES6DataStructuresAndAlgorithms.git"
   }
 }
