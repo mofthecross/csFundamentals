@@ -88,13 +88,13 @@ Can be solved using recursion with side effects.
 
 /******************************TEST******************************/
 
-const BinarySearchTree = require('es6datastructures').BinarySearchTree;
+const BinarySearchTree = require('es6datastructuresandalgorithms').BinarySearchTree;
 const newBST = new BinarySearchTree();
 [5,2,7,8,9].forEach( value => newBST.insert(value));
 
 console.log('this example should be true:', isValidBST(newBST.root));
 
-const BinaryTreeNode = require('es6datastructures').BinaryTreeNode;
+const BinaryTreeNode = require('es6datastructuresandalgorithms').BinaryTreeNode;
 const newBT = new BinaryTreeNode(5);
 newBT.leftChild = new BinaryTreeNode(2);
 newBT.rightChild = new BinaryTreeNode(7);
