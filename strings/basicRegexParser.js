@@ -32,95 +32,89 @@ output: true
 */
 
 function isMatch(string, pattern) {
-  pattern = pattern.split('');
   string = string.split('');
+  pattern = pattern.split('');
+  pattern = removeMultipleWildCard(pattern);
 
-  // pattern and string
-  if (pattern.length === 1 && string.length !== 1 && pattern[0] !== '*') {
-    return false;
+  let table = buildTable(string, pattern);
+  if (pattern.length > 0 && pattern[0] === '*') {
+    table[0][1] = true;
   }
 
-  const table = buildTable(string, pattern);
+  table[0][0] = true;
 
-  /* rules:
-  if currPatternChar = '.' -> take previous diagonal value;
-    table[row][col] = table[row - 1][col -1];
-  if currPatternChar = '*' -> take left value or top value;
-    table[row][col] = table[row][col-1] || table[row -1][col]
-  else:
-    table[row][col] = F
-  */
+  for (var row = 1; row < table.length; row +=1) {
+    for (var col = 1; col < table[row].length; col +=1 ) {
 
-  for (var row = 1; row < table.length; row += 1) {
-    for (var col = 1; col < table[row].length; col += 1) {
+      let currStringChar = string[row - 1];
+      let currPatternChar = pattern[col - 1];
+      let matched = currStringChar === currPatternChar;
 
-      let currentPatternChar = table[0][col];
-      let currentStringChar = table[row][0];
-
-      if (currentPatternChar === '.') {
-        table[row][col] = handleOneWildCard(table, row, col);
-      } else if (currentPatternChar === '*') {
-        table[row][col] = handleMultiWildCards(table, row, col);
-      } else {
-        let matched = currentPatternChar === currentStringChar;
-        table[row][col]  = matched
+      if (currPatternChar === '.' || matched === true) {
+        table[row][col] = table[row - 1][col - 1];
+      } else if ( currPatternChar === '*') {
+        let top = table[row - 1][col];
+        let left = table[row][col-1];
+        table[row][col] = top || left;
       }
     }
   }
-  //console.log(table)
-  return table[row - 1][col - 1];
+  console.log(table, row, col, pattern, string)
+  return table[row - 1][col - 1] || false
 }
 
-function buildTable(string, pattern) {
-  pattern.unshift(true); //table[0][0] will always be true;
-  let table = new Array(string.length + 1).fill('');
 
-  table.forEach((row, index) => {
-    let emptyColumns = new Array(pattern.length).fill('');
-    if (index === 0) {
-      table[index] = pattern;
-    } else if (index === 1) {
-      table[index] = emptyColumns;
-      table[index][0] = string[index - 1];
-    } else {
-      table[index] = emptyColumns;
-      table[index][0] = string[index - 1];
-    }
-  });
+function buildTable(string, pattern) {
+
+  //replace multimple consecutive '*' with just one '*'
+  pattern = removeMultipleWildCard(pattern);
+  const table = new Array(string.length + 1)
+    .fill('')
+    .map( ()=> {
+      return new Array(pattern.length + 1).fill('');
+    });
+
   return table;
 }
 
+function removeMultipleWildCard(pattern) {
 
-function handleOneWildCard(table, row, col) {
-  let previousDiagonal = table[row - 1][col - 1];
-  if (typeof previousDiagonal === 'boolean') {
-    return  previousDiagonal;
-  } else {
-    return false;
+  let  writeIndex = 0;
+  let  isFirst = true;
+  for (let i = 0; i < pattern.length; i++) {
+    if (pattern[i] === '*') {
+       if (isFirst) {
+         pattern[writeIndex] = pattern[i];
+         writeIndex++
+         isFirst = false;
+       }
+    } else {
+      pattern[writeIndex] = pattern[i];
+      writeIndex++
+      isFirst = true;
+    }
   }
-}
 
-function handleMultiWildCards(table, row, col) {
-  // if row === 1 --> row - 1 will be out of bounce;
-  // if col === 1 --> col - 1 will be out of bounce;
-  let top = row !== 1 ? table[row - 1][col] : true;
-  let left = col !== 1 ? table[row][col - 1] : true;
-
-  //return currentcell to either top or left; (true will take precedence)
-  return top || left;
+  return pattern.slice(0, writeIndex);
 }
 
 
-console.log('input:  text = "xaylmz", pattern = "x.*z" -> true', isMatch('xaylmz', 'x.*z'));
+//console.log())
 
-console.log('input:  text = "aa", pattern = "a" -> false', isMatch('aa', 'a'));
 
-console.log('input:  text = "aa", pattern = "*" -> true', isMatch('aa', '*'));
 
-console.log('input:  text = "aa", pattern = "aa" -> true', isMatch('aa', 'aa'));
 
-console.log('input:  text = "abc", pattern = "a.c" -> true', isMatch('abc', 'a.c'));
 
-console.log('input:  text = "abbb", pattern = "ab*" -> true', isMatch('abbb', 'ab*'));
+// console.log('input:  text = "xaylmz", pattern = "x.*z" -> true', isMatch('xaylmz', 'x.*z'));
+//
+// console.log('input:  text = "aa", pattern = "a" -> false', isMatch('aa', 'a'));
+//
+// console.log('input:  text = "aa", pattern = "*" -> true', isMatch('aa', '*'));
+//
+// console.log('input:  text = "aa", pattern = "aa" -> true', isMatch('aa', 'aa'));
+//
+// console.log('input:  text = "abc", pattern = "a.c" -> true', isMatch('abc', 'a.c'));
+//
+// console.log('input:  text = "abbb", pattern = "ab*" -> true', isMatch('abbb', 'ab*'));
 
 console.log('input:  text = "acd", pattern = "ab*c." -> true', isMatch('acd', 'ab*c.'));
